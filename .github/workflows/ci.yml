@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  # main 에 들어올 때만 강화 설정 (퍼즈 1만 번, 불변식 1,024번), 그 밖에는 기본 설정
+  FOUNDRY_PROFILE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'ci' || 'default' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.4.2
+
+      - name: format
+        run: forge fmt --check
+
+      - name: build
+        run: forge build --sizes
+
+      - name: lint
+        run: forge lint
+
+      - name: test
+        run: forge test

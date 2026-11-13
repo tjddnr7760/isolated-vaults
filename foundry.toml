@@ -1,0 +1,47 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+sizes = true
+bytecode_hash = "none"
+# 함수 목록 테스트는 빌드 결과를 읽고, 배포 스크립트는 배포 주소를 씀
+fs_permissions = [{ access = "read", path = "./out" }, { access = "read-write", path = "./deployments" }]
+
+# 값은 .env 에서 읽음
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+[profile.default.fuzz]
+runs = 1000
+
+[profile.default.invariant]
+runs = 256
+depth = 32
+fail_on_revert = true
+
+[profile.default.fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = false
+quote_style = "double"
+wrap_comments = true
+int_types = "long"
+multiline_func_header = "attributes_first"
+
+[lint]
+severity = ["high", "med"]
+# immutable 대문자 표기 허용
+exclude_lints = ["screaming-snake-case-immutable", "mixed-case-function", "mixed-case-variable"]
+ignore = ["test/**/*.sol", "script/**/*.sol"]
+
+[profile.ci.fuzz]
+runs = 10000
+
+[profile.ci.invariant]
+runs = 1024
+depth = 64
